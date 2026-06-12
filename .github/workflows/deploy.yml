@@ -1,45 +1,45 @@
-name: Build and Push to GHCR
+name: flask app hola
 
 on:
   push:
     branches:
       - main
-      - master
 
+permissions:
+  contents: read
+  packages: write
+
+# Definimos la versión aquí arriba para que la cambies fácilmente a 2.0.0 después
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  APP_VERSION: 1.0.0
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GT_TOKEN }}
+          python-version: "3.12"
 
-      - name: Extract App Version
-        id: get_version
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Login hacia GitHub Container Registry
+        # Usamos GITHUB_TOKEN nativo para evitar configurar secretos manuales
+        run: echo "${{ secrets.GT_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Construir imagen de docker
+        # Construimos la imagen dos veces: una con el tag de la versión y otra con 'latest'
         run: |
-          # Busca el fallback de APP_VERSION en app.py para automatizar el etiquetado
-          VERSION=$(grep -oP 'APP_VERSION = os.getenv\("APP_VERSION", "\K[^"\)]+' app.py || echo "1.0.0")
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          docker build -t ghcr.io/isaacyav97/docpost:${{ env.APP_VERSION }} .
+          docker build -t ghcr.io/isaacyav97/docpost:latest .
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+      - name: Publicar la imagen
+        # Subimos ambos tags a GHCR como pide el examen
+        run: |
+          docker push ghcr.io/isaacyav97/docpost:${{ env.APP_VERSION }}
+          docker push ghcr.io/isaacyav97/docpost:latest
