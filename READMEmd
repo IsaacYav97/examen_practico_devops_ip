@@ -1,0 +1,63 @@
+# EXAMEN PRÁCTICO DE DEVOPS
+
+**Duración:** 120 minutos  
+**Modalidad:** Individual  
+
+---
+
+## Indicaciones
+
+Desarrolle una solución DevOps utilizando Flask, PostgreSQL, pgAdmin, Docker Compose, GitHub Actions y GitHub Container Registry (GHCR).
+
+---
+
+## Requerimientos
+
+* **Crear una aplicación Flask conectada a PostgreSQL.**
+* **La aplicación deberá utilizar variables de entorno para configurar al menos uno de los siguientes temas:**
+  * Nombre de la aplicación.
+  * Versión de la aplicación.
+  * Nombre de la base de datos.
+  * Usuario de la base de datos.
+  * Contraseña de la base de datos.
+* **La aplicación deberá mostrar en la ruta principal:**
+  * Nombre de la aplicación.
+  * Versión actual.
+  * Estado de conexión con PostgreSQL.
+* **Crear una tabla llamada:** `productos` con los campos necesarios para almacenar:
+  * Id
+  * Nombre
+  * Precio
+  * Stock
+* **Insertar al menos cinco registros.**
+* **Crear una ruta que permita visualizar todos los productos almacenados en la base de datos.**
+* **Dockerizar la aplicación mediante un Dockerfile.**
+* **Crear un archivo Docker Compose que levante simultáneamente:**
+  * PostgreSQL
+  * pgAdmin
+  * Aplicación Flask
+* **Configurar persistencia de datos mediante volúmenes.**
+* **Configurar las variables de entorno necesarias desde Docker Compose.**
+* **Crear un repositorio GitHub para almacenar el proyecto.**
+* **Implementar un workflow de GitHub Actions que:**
+  * Se ejecute automáticamente al realizar un push sobre la rama principal.
+  * Construya la imagen Docker.
+  * Publique la imagen en GitHub Container Registry (GHCR).
+* **Publicar inicialmente la imagen con los tags:**
+  * `1.0.0`
+  * `latest`
+* **Posteriormente actualizar la aplicación a la versión:**
+  * `2.0.0`
+* **Realizar un nuevo commit y verificar la publicación automática de la nueva imagen en GHCR.**
+
+---
+
+## Entregables
+
+* Repositorio GitHub.
+* Código fuente completo.
+* Dockerfile.
+* Docker Compose.
+* Workflow GitHub Actions.
+* Evidencias de funcionamiento.
+* Evidencias de publicación en GHCR.
